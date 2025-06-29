@@ -571,8 +571,11 @@ a {
 }
 
 @media (max-width: 576px) {
-    .section-header h2 {
+    .hero-content {
         margin-top: -35px;
+    }
+
+    .hero-content h1{
         font-size: 3rem;
     }
     
@@ -583,8 +586,11 @@ a {
 }
 
 @media (max-width: 400px) {
-    .section-header h2 {
+    .hero-content {
         margin-top: -35px;
+    }
+
+     .hero-content h1{
         font-size: 3rem;
     }
 }
