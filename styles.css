@@ -572,7 +572,7 @@ a {
 
 @media (max-width: 576px) {
     .section-header h2 {
-        margin-top: -20px;
+        margin-top: -35px;
         font-size: 3rem;
     }
     
@@ -584,7 +584,7 @@ a {
 
 @media (max-width: 400px) {
     .section-header h2 {
-        margin-top: -20px;
+        margin-top: -35px;
         font-size: 3rem;
     }
 }
