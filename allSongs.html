@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Library | All Songs</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --light-bg: #f8f9fa;
+            --dark-text: #2d3436;
+            --light-text: #f8f9fa;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+            position: relative;
+        }
+        
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-top: 90px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+        }
+        
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+        }
+        
+        .home-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .home-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        /* Songs Grid */
+        .songs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .song-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+        
+        .song-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .song-cover {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .song-info {
+            padding: 15px;
+        }
+        
+        .song-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark-text);
+        }
+        
+        .song-artist {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .song-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .action-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .download-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .details-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+        
+        /* Song Details Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+        
+        .exit-btn {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .exit-btn:hover {
+            background-color: #ff6b81;
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .modal-cover {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .song-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .detail-item {
+            margin-bottom: 10px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            color: var(--dark-text);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .songs-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .home-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .song-details {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .songs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .modal-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+     <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo">K<span>U</span></a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#music">Music</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="book.html">Book</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="page-title">All Songs</h1>
+            <button class="home-btn">
+                <i class="fas fa-home"><a href="index.html"> Home</a></i>
+            </button>
+        </div>
+        
+        <div class="songs-grid">
+            <!-- Song Card 1 -->
+            <div class="song-card">
+                <img src="https://source.unsplash.com/random/300x300/?music,album" alt="Song Cover" class="song-cover">
+                <div class="song-info">
+                    <h3 class="song-title">Midnight Dreams</h3>
+                    <p class="song-artist">The Echoes</p>
+                    <div class="song-actions">
+                        <button class="action-btn download-btn">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                        <button class="action-btn details-btn" onclick="showDetails(1)">
+                            <i class="fas fa-info-circle"></i> Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Song Card 2 -->
+            <div class="song-card">
+                <img src="https://source.unsplash.com/random/300x300/?music,concert" alt="Song Cover" class="song-cover">
+                <div class="song-info">
+                    <h3 class="song-title">Summer Vibes</h3>
+                    <p class="song-artist">Solar Flare</p>
+                    <div class="song-actions">
+                        <button class="action-btn download-btn">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                        <button class="action-btn details-btn" onclick="showDetails(2)">
+                            <i class="fas fa-info-circle"></i> Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Song Card 3 -->
+            <div class="song-card">
+                <img src="https://source.unsplash.com/random/300x300/?music,piano" alt="Song Cover" class="song-cover">
+                <div class="song-info">
+                    <h3 class="song-title">Autumn Leaves</h3>
+                    <p class="song-artist">Melancholy</p>
+                    <div class="song-actions">
+                        <button class="action-btn download-btn">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                        <button class="action-btn details-btn" onclick="showDetails(3)">
+                            <i class="fas fa-info-circle"></i> Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Song Details Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalSongTitle">Song Title</h2>
+                <button class="exit-btn" onclick="hideDetails()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="" alt="Song Cover" class="modal-cover" id="modalSongCover">
+                <div class="song-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Artist</div>
+                        <div class="detail-value" id="modalSongArtist">Artist Name</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Album</div>
+                        <div class="detail-value" id="modalSongAlbum">Album Name</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Release Date</div>
+                        <div class="detail-value" id="modalSongDate">YYYY-MM-DD</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Genre</div>
+                        <div class="detail-value" id="modalSongGenre">Genre</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Duration</div>
+                        <div class="detail-value" id="modalSongDuration">3:45</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">File Size</div>
+                        <div class="detail-value" id="modalSongSize">5.2 MB</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Description</div>
+                    <div class="detail-value" id="modalSongDesc">This is a sample song description that provides more information about the track, its inspiration, and other relevant details.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sample song data
+        const songs = {
+            1: {
+                title: "Midnight Dreams",
+                artist: "The Echoes",
+                album: "Nocturnal",
+                date: "2024-03-15",
+                genre: "Alternative Rock",
+                duration: "4:22",
+                size: "6.1 MB",
+                cover: "https://source.unsplash.com/random/300x300/?music,album",
+                desc: "A haunting melody that captures the essence of late-night introspection. Featured in the soundtrack of the award-winning film 'City Lights'."
+            },
+            2: {
+                title: "Summer Vibes",
+                artist: "Solar Flare",
+                album: "Sunshine",
+                date: "2023-06-21",
+                genre: "Pop",
+                duration: "3:15",
+                size: "4.5 MB",
+                cover: "https://source.unsplash.com/random/300x300/?music,concert",
+                desc: "Upbeat summer anthem that topped charts for 12 consecutive weeks. Perfect for beach parties and road trips."
+            },
+            3: {
+                title: "Autumn Leaves",
+                artist: "Melancholy",
+                album: "Seasons Change",
+                date: "2022-09-30",
+                genre: "Jazz",
+                duration: "5:42",
+                size: "7.8 MB",
+                cover: "https://source.unsplash.com/random/300x300/?music,piano",
+                desc: "Smooth jazz composition featuring legendary pianist Mark Johnson. Recorded live at the Blue Note Jazz Club in New York."
+            }
+        };
+        
+        function showDetails(songId) {
+            const song = songs[songId];
+            document.getElementById('modalSongTitle').textContent = song.title;
+            document.getElementById('modalSongArtist').textContent = song.artist;
+            document.getElementById('modalSongAlbum').textContent = song.album;
+            document.getElementById('modalSongDate').textContent = song.date;
+            document.getElementById('modalSongGenre').textContent = song.genre;
+            document.getElementById('modalSongDuration').textContent = song.duration;
+            document.getElementById('modalSongSize').textContent = song.size;
+            document.getElementById('modalSongCover').src = song.cover;
+            document.getElementById('modalSongDesc').textContent = song.desc;
+            
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function hideDetails() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside content
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideDetails();
+            }
+        });
+    </script>
+</body>
+</html>
