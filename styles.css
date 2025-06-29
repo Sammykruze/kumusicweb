@@ -572,7 +572,7 @@ a {
 
 @media (max-width: 576px) {
     .hero-content {
-        margin-top: -25px;
+        margin-top: -50px;
     }
 
     .hero-content h1{
@@ -587,7 +587,7 @@ a {
 
 @media (max-width: 400px) {
     .hero-content {
-        margin-top: -25px;
+        margin-top: -50px;
     }
 
      .hero-content h1{
